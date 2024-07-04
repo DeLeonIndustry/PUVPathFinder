@@ -1,8 +1,8 @@
 <?php
-$locations_query = "SELECT municipal, terminal FROM routes";
+$locations_query = "SELECT municipal, terminal, latitude, longitude FROM routes";
 $locations_result = $conn->query($locations_query);
 
-$routes_query = "SELECT municipal, terminal FROM routes";
+$routes_query = "SELECT municipal, terminal, latitude, longitude FROM routes";
 $routes_result = $conn->query($routes_query);
 
 $locations_count_query = "SELECT COUNT(DISTINCT municipal, terminal) as count FROM routes";

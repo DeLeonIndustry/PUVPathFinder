@@ -96,7 +96,7 @@ if (!isset($_SESSION['admin_id'])) {
             </div>
          </div>
          <?php endif; ?>
-         <?php if ($_SESSION['role'] === 'Driver' || $_SESSION['role'] === 'Commuter') : ?>
+         <?php if ($_SESSION['role'] === 'Driver' || $_SESSION['role'] === 'Commuters') : ?>
          <div id="content-page" class="content-page">
             <div class="container-fluid">
                <div class="row">

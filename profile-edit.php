@@ -110,13 +110,8 @@ if (!isset($_SESSION['admin_id'])) {
                                     <h4 class="card-title">Change Password</h4>
                                  </div>
                               </div>
-                              <div class="iq-card-body">
-                                 
-                              </div>
                            </div>
                         </div>
-
-
                      </div>
                   </div>
                </div>
@@ -124,7 +119,7 @@ if (!isset($_SESSION['admin_id'])) {
          </div>
       </div>
       <?php endif; ?>
-      <?php if ($_SESSION['role'] === 'Driver' || $_SESSION['role'] === 'Commuter') : ?>
+      <?php if ($_SESSION['role'] === 'Driver' || $_SESSION['role'] === 'Commuters') : ?>
          <div id="content-page" class="content-page">
          <div class="container-fluid">
             <div class="row">
@@ -172,8 +167,8 @@ if (!isset($_SESSION['admin_id'])) {
                                           </div>
                                        </div>
                                     </div>
-                                    <p><i style="color: red;">You must update Plate No. and Type of Vehicle to activate status.</i></p>
                                     <div class=" row align-items-center">
+                                    <?php if ($_SESSION['role'] === 'Driver') : ?>
                                        <div class="form-group col-sm-6">
                                           <label for="fname">Plate No.</label>
                                           <input type="text" class="form-control" id="plateno" value="">
@@ -182,6 +177,7 @@ if (!isset($_SESSION['admin_id'])) {
                                           <label for="lname">Type of Vehicle</label>
                                           <input type="text" class="form-control" id="tovehicle" value="">
                                        </div>
+                                       <?php endif; ?>
                                        <div class="form-group col-sm-6">
                                           <label for="fname">First Name:</label>
                                           <input type="text" class="form-control" id="name" value="">

@@ -73,6 +73,13 @@ $routes_result = $conn->query($routes_query);
                   <div class="col-12">
                      <div class="card">
                         <div class="card-body">
+
+                           <div id="map" style="height: 300px; margin-bottom: 15px;"></div>
+                           <script>
+                              var map = L.map('map').setView([16.936249, 121.769288], 13);
+                              L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {}).addTo(map);
+                              var marker = L.marker([16.936249, 121.769288]).addTo(map);
+                           </script>
                            <form action="config/driver-update.php" method="POST">
                               <div class="form mt-3">
                                  <div class="form-row">

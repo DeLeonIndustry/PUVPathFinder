@@ -33,6 +33,7 @@ if (!isset($_SESSION['admin_id'])) {
    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+
 </head>
 
 <body>
@@ -97,7 +98,7 @@ if (!isset($_SESSION['admin_id'])) {
                            <span class="float-right line-height-6">Commuters</span>
                            <div class="clearfix"></div>
                            <div class="text-center">
-                           <h2 class="mb-0"><span class="counter"><?php echo $commuter_count; ?></span></h2>
+                              <h2 class="mb-0"><span class="counter"><?php echo $commuter_count; ?></span></h2>
                            </div>
                         </div>
                         <br><br>
@@ -110,10 +111,10 @@ if (!isset($_SESSION['admin_id'])) {
                            <span class="float-right line-height-6">In Route</span>
                            <div class="clearfix"></div>
                            <div class="text-center">
-                           <h2 class="mb-0"><span class="counter"><?php echo $drivers_in_route_count; ?></span></h2>
+                              <h2 class="mb-0"><span class="counter"><?php echo $drivers_in_route_count; ?></span></h2>
                            </div>
                         </div>
-                     <br><br>
+                        <br><br>
                      </div>
                   </div>
                </div>
@@ -138,20 +139,90 @@ if (!isset($_SESSION['admin_id'])) {
                            </div>
                         </div>
                         <div class="iq-card-body">
-                           <div id="map" style="height: 500px; margin-bottom: 15px; z-index: 0;"></div>
+                           <div id="mapDriver" style="height: 500px; margin-bottom: 15px; z-index: 0;"></div>
                            <script>
-                              var map = L.map('map').setView([16.936249, 121.769288], 13);
-                              L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {}).addTo(map);
+                              document.addEventListener('DOMContentLoaded', function() {
+                                 // Initialize Driver map
+                                 var mapDriver = L.map('mapDriver').setView([16.936249, 121.769288], 13);
+                                 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {}).addTo(mapDriver);
+
+                                 function updateDriverMap() {
+                                    var currentLocationSelect = document.getElementById('currentLocationSelect');
+                                    var selectRouteSelect = document.getElementById('selectRouteSelect');
+
+                                    // Clear existing markers and routes in Driver map
+                                    mapDriver.eachLayer(function(layer) {
+                                       if (layer instanceof L.Marker || layer instanceof L.Polyline) {
+                                          mapDriver.removeLayer(layer);
+                                       }
+                                    });
+
+                                    // Get selected option values
+                                    var currentLocationOption = currentLocationSelect.options[currentLocationSelect.selectedIndex];
+                                    var selectRouteOption = selectRouteSelect.options[selectRouteSelect.selectedIndex];
+
+                                    // Add marker for current location
+                                    if (currentLocationOption.dataset.lat && currentLocationOption.dataset.lng) {
+                                       var lat = parseFloat(currentLocationOption.dataset.lat);
+                                       var lng = parseFloat(currentLocationOption.dataset.lng);
+                                       var marker = L.marker([lat, lng]).addTo(mapDriver);
+                                       marker.bindPopup(currentLocationOption.value).openPopup();
+                                    }
+
+                                    // Add marker for selected route
+                                    if (selectRouteOption.dataset.lat && selectRouteOption.dataset.lng) {
+                                       var routeLat = parseFloat(selectRouteOption.dataset.lat);
+                                       var routeLng = parseFloat(selectRouteOption.dataset.lng);
+                                       var routeMarker = L.marker([routeLat, routeLng]).addTo(mapDriver);
+                                       routeMarker.bindPopup(selectRouteOption.value).openPopup();
+                                    }
+
+                                    // Draw a polyline between current location and selected route
+                                    if (currentLocationOption.dataset.lat && currentLocationOption.dataset.lng &&
+                                       selectRouteOption.dataset.lat && selectRouteOption.dataset.lng) {
+                                       var latLngs = [
+                                          [parseFloat(currentLocationOption.dataset.lat), parseFloat(currentLocationOption.dataset.lng)],
+                                          [parseFloat(selectRouteOption.dataset.lat), parseFloat(selectRouteOption.dataset.lng)]
+                                       ];
+                                       var route = L.polyline(latLngs, {
+                                          color: 'blue',
+                                          opacity: 0.7,
+                                          weight: 5
+                                       }).addTo(mapDriver);
+                                    }
+                                 }
+
+                                 // Event listeners for select elements
+                                 var currentLocationSelect = document.getElementById('currentLocationSelect');
+                                 var selectRouteSelect = document.getElementById('selectRouteSelect');
+
+                                 if (currentLocationSelect) {
+                                    currentLocationSelect.addEventListener('change', function() {
+                                       updateDriverMap();
+                                    });
+                                 }
+
+                                 if (selectRouteSelect) {
+                                    selectRouteSelect.addEventListener('change', function() {
+                                       updateDriverMap(); // Update Driver map only
+                                    });
+                                 }
+
+                                 // Initial call to update Driver map based on default selected options
+                                 updateDriverMap();
+                              });
                            </script>
-                           <form action="config/driver-update.php" method="POST">
+
+
+                           <form action="config/driver-update.php" method="POST" id="routeForm">
                               <div class="form mt-3">
                                  <div class="form-row">
                                     <div class="form-group col-md-6">
                                        <label for="currentLocation">Current Location</label>
-                                       <select id="currentLocation" name="curloc" class="form-control">
+                                       <select id="currentLocationSelect" name="curloc" class="form-control">
                                           <option selected>Choose...</option>
                                           <?php while ($location = $locations_result->fetch_assoc()) : ?>
-                                             <option value="<?php echo htmlspecialchars($location['municipal'] . ' - ' . $location['terminal']); ?>">
+                                             <option value="<?php echo htmlspecialchars($location['municipal'] . ' - ' . $location['terminal']); ?>" data-lat="<?php echo htmlspecialchars($location['latitude']); ?>" data-lng="<?php echo htmlspecialchars($location['longitude']); ?>">
                                                 <?php echo htmlspecialchars($location['municipal'] . ' - ' . $location['terminal']); ?>
                                              </option>
                                           <?php endwhile; ?>
@@ -159,10 +230,12 @@ if (!isset($_SESSION['admin_id'])) {
                                     </div>
                                     <div class="form-group col-md-6">
                                        <label for="selectRoute">Select Route</label>
-                                       <select id="selectRoute" name="route" class="form-control">
+                                       <select id="selectRouteSelect" name="route" class="form-control">
                                           <option selected>Choose...</option>
-                                          <?php while ($routes = $routes_result->fetch_assoc()) : ?>
-                                             <option value="<?php echo htmlspecialchars($routes['municipal'] . ' - ' . $routes['terminal']); ?>">
+                                          <?php // Reset pointer of routes_result to start again
+                                          $routes_result->data_seek(0);
+                                          while ($routes = $routes_result->fetch_assoc()) : ?>
+                                             <option value="<?php echo htmlspecialchars($routes['municipal'] . ' - ' . $routes['terminal']); ?>" data-lat="<?php echo htmlspecialchars($routes['latitude']); ?>" data-lng="<?php echo htmlspecialchars($routes['longitude']); ?>">
                                                 <?php echo htmlspecialchars($routes['municipal'] . ' - ' . $routes['terminal']); ?>
                                              </option>
                                           <?php endwhile; ?>
@@ -181,7 +254,7 @@ if (!isset($_SESSION['admin_id'])) {
                                     </div>
                                     <div class="form-group col-md-6">
                                        <label for="currentLocation">Active Status</label>
-                                       <select id="currentLocation" name="status" class="form-control">
+                                       <select id="status" name="status" class="form-control">
                                           <option selected>Select Active Status</option>
                                           <option value="1">Active</option>
                                           <option value="0">Inactive</option>
@@ -190,76 +263,74 @@ if (!isset($_SESSION['admin_id'])) {
                                  </div>
                                  <div class="form-row">
                                     <div class="form-group col-md-6">
-                                    <button type="submit" class="btn btn-primary float-right">Save</button>
+                                       <button type="submit" class="btn btn-primary float-right">Save</button>
                                     </div>
                                  </div>
                               </div>
+                           </form>
                         </div>
                      </div>
-                     </form>
                   </div>
                </div>
+
             </div>
+         <?php endif; ?>
+
+         <!-- COMMUTERS -->
+         <?php if ($_SESSION['role'] === 'Commuters') : ?>
+            <div id="content-page" class="content-page">
+               <div class="container-fluid">
+
+                  <div id="map" style="height: 500px; margin-bottom: 15px; z-index: 0;"></div>
+                  <script>
+                     var map = L.map('map').setView([16.936249, 121.769288], 13);
+                     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {}).addTo(map);
+                  </script>
+               </div>
+            </div>
+         <?php endif; ?>
          </div>
 
-   </div>
-<?php endif; ?>
+         <!-- Wrapper END -->
+         <!-- Footer -->
+         <?php include('partials/footer.php'); ?>
+         <!-- Footer END -->
+         <!-- Optional JavaScript -->
+         <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+         <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+         <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+         <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 
-<!-- COMMUTERS -->
-<?php if ($_SESSION['role'] === 'Commuters') : ?>
-   <div id="content-page" class="content-page">
-      <div class="container-fluid">
-
-         <div id="map" style="height: 500px; margin-bottom: 15px; z-index: 0;"></div>
-         <script>
-            var map = L.map('map').setView([16.936249, 121.769288], 13);
-            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {}).addTo(map);
-         </script>
-      </div>
-   </div>
-<?php endif; ?>
-</div>
-
-<!-- Wrapper END -->
-<!-- Footer -->
-<?php include('partials/footer.php'); ?>
-<!-- Footer END -->
-<!-- Optional JavaScript -->
-<!-- jQuery first, then Popper.js, then Bootstrap JS -->
-<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-
-<script src="js/jquery.min.js"></script>
-<script src="js/popper.min.js"></script>
-<script src="js/bootstrap.min.js"></script>
-<!-- Appear JavaScript -->
-<script src="js/jquery.appear.js"></script>
-<!-- Countdown JavaScript -->
-<script src="js/countdown.min.js"></script>
-<!-- Counterup JavaScript -->
-<script src="js/waypoints.min.js"></script>
-<script src="js/jquery.counterup.min.js"></script>
-<!-- Wow JavaScript -->
-<script src="js/wow.min.js"></script>
-<!-- Apexcharts JavaScript -->
-<script src="js/apexcharts.js"></script>
-<!-- Slick JavaScript -->
-<script src="js/slick.min.js"></script>
-<!-- Select2 JavaScript -->
-<script src="js/select2.min.js"></script>
-<!-- Owl Carousel JavaScript -->
-<script src="js/owl.carousel.min.js"></script>
-<!-- Magnific Popup JavaScript -->
-<script src="js/jquery.magnific-popup.min.js"></script>
-<!-- Smooth Scrollbar JavaScript -->
-<script src="js/smooth-scrollbar.js"></script>
-<!-- lottie JavaScript -->
-<script src="js/lottie.js"></script>
-<!-- Chart Custom JavaScript -->
-<script src="js/chart-custom.js"></script>
-<!-- Custom JavaScript -->
-<script src="js/custom.js"></script>
+         <script src="js/jquery.min.js"></script>
+         <script src="js/popper.min.js"></script>
+         <script src="js/bootstrap.min.js"></script>
+         <!-- Appear JavaScript -->
+         <script src="js/jquery.appear.js"></script>
+         <!-- Countdown JavaScript -->
+         <script src="js/countdown.min.js"></script>
+         <!-- Counterup JavaScript -->
+         <script src="js/waypoints.min.js"></script>
+         <script src="js/jquery.counterup.min.js"></script>
+         <!-- Wow JavaScript -->
+         <script src="js/wow.min.js"></script>
+         <!-- Apexcharts JavaScript -->
+         <script src="js/apexcharts.js"></script>
+         <!-- Slick JavaScript -->
+         <script src="js/slick.min.js"></script>
+         <!-- Select2 JavaScript -->
+         <script src="js/select2.min.js"></script>
+         <!-- Owl Carousel JavaScript -->
+         <script src="js/owl.carousel.min.js"></script>
+         <!-- Magnific Popup JavaScript -->
+         <script src="js/jquery.magnific-popup.min.js"></script>
+         <!-- Smooth Scrollbar JavaScript -->
+         <script src="js/smooth-scrollbar.js"></script>
+         <!-- lottie JavaScript -->
+         <script src="js/lottie.js"></script>
+         <!-- Chart Custom JavaScript -->
+         <script src="js/chart-custom.js"></script>
+         <!-- Custom JavaScript -->
+         <script src="js/custom.js"></script>
 </body>
 
 </html>
