@@ -20,11 +20,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             VALUES ('$firstname', '$middlename', '$surname', '$suffix', '$email', '$hashed_password', 'Commuters',NOW())";
 
     if ($conn->query($sql) === TRUE) {
-        header("Location: ../index.php");
-        echo '<script>alert("Commuters Account Created!")</script>';
-        header("Location: ../index.php");
+        echo '<script>
+                alert("Commuters Account Created!");
+                window.location.href = "../index.php";
+            </script>';
+
     } else {
-        echo '<script>alert("Error: " . $sql . "<br>" . $conn->error)</script>';
+        echo '<script>
+                alert("Error: ' . $conn->error . '");
+                window.location.href = "../index.php";
+            </script>';
     }
 }
 

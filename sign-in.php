@@ -50,7 +50,7 @@ if (isset($_SESSION['admin_id'])) {
                     <div class="col-sm-6 align-self-center">
                         <div class="sign-in-from">
                             <h1 class="mb-0">Sign in</h1>
-                            <p>Enter your email address and password to access admin panel.</p>
+                            <p>Enter your email address and password.</p>
                             <form action="config/login.php" method="POST" class="mt-4">
                             <div class="form-group">
                                 <label for="exampleInputEmail1">Email</label>

@@ -63,93 +63,20 @@ if (!isset($_SESSION['admin_id'])) {
                         <div class="iq-edit-list">
                            <ul class="iq-edit-profile d-flex nav nav-pills">
                               <li class="col-md-3 p-0">
-                                 <a class="nav-link active" data-toggle="pill" href="#personal-information">
-                                    Personal Information
-                                 </a>
-                              </li>
-                              <li class="col-md-3 p-0">
-                                 <a class="nav-link" data-toggle="pill" href="#chang-pwd">
+                                    <a class="nav-link active" data-toggle="pill" href="#personal-information">
                                     Change Password
                                  </a>
                               </li>
-
                            </ul>
                         </div>
                      </div>
                   </div>
                </div>
+
                <div class="col-lg-12">
                   <div class="iq-edit-list-data">
                      <div class="tab-content">
                         <div class="tab-pane fade active show" id="personal-information" role="tabpanel">
-                           <div class="iq-card">
-                              <div class="iq-card-header d-flex justify-content-between">
-                                 <div class="iq-header-title">
-                                    <h4 class="card-title">Personal Information</h4>
-                                 </div>
-                              </div>
-                              <div class="iq-card-body">
-                                 <form>
-                                    <div class="form-group row align-items-center">
-                                       <div class="col-md-12">
-                                          <div class="profile-img-edit">
-                                             <img class="profile-pic" src="images/user/11.png" alt="profile-pic">
-                                             <div class="p-image">
-                                                <i class="ri-pencil-line upload-button"></i>
-                                                <input class="file-upload" type="file" accept="image/*" />
-                                             </div>
-                                          </div>
-                                       </div>
-                                    </div>
-                                    <p><i style="color: red;">You must update Plate No. and Type of Vehicle to activate status.</i></p>
-                                    <div class=" row align-items-center">
-                                       <div class="form-group col-sm-6">
-                                          <label for="fname">Plate No.</label>
-                                          <input type="text" class="form-control" id="plateno" value="">
-                                       </div>
-                                       <div class="form-group col-sm-6">
-                                          <label for="lname">Type of Vehicle</label>
-                                          <input type="text" class="form-control" id="tovehicle" value="">
-                                       </div>
-                                       <div class="form-group col-sm-6">
-                                          <label for="fname">First Name:</label>
-                                          <input type="text" class="form-control" id="name" value="">
-                                       </div>
-                                       <div class="form-group col-sm-6">
-                                          <label for="lname">Middle Name</label>
-                                          <input type="text" class="form-control" id="mname" value="">
-                                       </div>
-                                       <div class="form-group col-sm-6">
-                                          <label for="lname">Last Name:</label>
-                                          <input type="text" class="form-control" id="lname" value="">
-                                       </div>
-                                       <div class="form-group col-sm-6">
-                                          <label for="lname">Suffix</label>
-                                          <input type="text" class="form-control" id="suffix" value="">
-                                       </div>
-                                       <div class="form-group col-sm-6">
-                                          <label for="lname">Email</label>
-                                          <input type="text" class="form-control" id="email" value="">
-                                       </div>
-                                       <div class="form-group col-sm-6">
-                                          <label for="lname">Address</label>
-                                          <input type="text" class="form-control" id="address" value="">
-                                       </div>
-                                       <div class="form-group col-sm-6">
-                                          <label for="lname">Date of Birth</label>
-                                          <input type="date" class="form-control" id="dob" value="">
-                                       </div>
-                                       <div class="form-group col-sm-6">
-                                          <label for="lname">Contact</label>
-                                          <input type="text" class="form-control" id="contact" value="">
-                                       </div>
-                                    </div>
-                                    <button type="submit" class="btn btn-primary mr-2">Update</button>
-                                 </form>
-                              </div>
-                           </div>
-                        </div>
-                        <div class="tab-pane fade" id="chang-pwd" role="tabpanel">
                            <div class="iq-card">
                               <div class="iq-card-header d-flex justify-content-between">
                                  <div class="iq-header-title">
@@ -176,8 +103,8 @@ if (!isset($_SESSION['admin_id'])) {
                               </div>
                            </div>
                         </div>
-
-
+                        <div class="tab-pane fade" id="chang-pwd" role="tabpanel">
+                        </div>
                      </div>
                   </div>
                </div>

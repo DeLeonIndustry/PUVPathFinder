@@ -50,7 +50,7 @@ if (isset($_SESSION['admin_id'])) {
                     <div class="col-sm-6 align-self-center">
                         <div class="sign-in-from">
                             <h1 class="mb-0">Sign Up</h1>
-                            <p>Enter your email address and password to access admin panel.</p>
+                            <p>Fill up all the required details.</p>
                             <form action="config/commuters-account-reg.php" method="POST" class="mt-4">
                                 <div class="form-group">
                                     <label for="exampleInputName">Name<span style="color:red;">*</span></label>
@@ -93,11 +93,6 @@ if (isset($_SESSION['admin_id'])) {
                                 </div>
                                 <div class="sign-info">
                                     <span class="dark-color d-inline-block line-height-2">Already Have Account ? <a href="sign-in.php">Login</a></span>
-                                    <ul class="iq-social-media">
-                                        <li><a href="#"><i class="ri-facebook-box-line"></i></a></li>
-                                        <li><a href="#"><i class="ri-twitter-line"></i></a></li>    
-                                        <li><a href="#"><i class="ri-instagram-line"></i></a></li>
-                                    </ul>
                                 </div>
                             </form>
                         </div>

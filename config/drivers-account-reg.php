@@ -25,10 +25,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             VALUES ('$firstname', '$middlename', '$surname', '$suffix', '$address', '$birthdate', '$contact', '$idtype', '$idno', '$email', '$hashed_password', 'Driver',NOW())";
 
     if ($conn->query($sql) === TRUE) {
-        header("Location: ../drivers.php");
-        echo '<script>alert("Driver Account Created!")</script>'; 
+        echo '<script>
+        alert("Driver Account Created!");
+        window.location.href = "../drivers.php";
+    </script>';
     } else {
-        echo '<script>alert("Error: " . $sql . "<br>" . $conn->error)</script>'; 
+        echo '<script>
+        alert("Error: ' . $conn->error . '");
+        window.location.href = "../drivers.php";
+    </script>';
     }
 }
 

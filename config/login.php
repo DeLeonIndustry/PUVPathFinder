@@ -33,7 +33,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         } else {
             $stmt->bind_param("s", $email);
         }
-        
+
         $stmt->execute();
         $stmt->store_result();
         $stmt->bind_result($id, $name, $emailResult, $roleResult, $hashed_password);
@@ -47,16 +47,20 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             header("Location: ../index.php");
             exit();
         } else {
-            echo '<script>alert("Invalid email or password.")</script>'; 
-            header("Location: ../index.php");
+            echo '<script>
+        alert("Invalid email or password.");
+        window.location.href = "../index.php";
+    </script>';
         }
 
         $stmt->close();
     } else {
-        echo '<script>alert("Error preparing statement: " . $conn->error)</script>'; 
-        header("Location: ../index.php");
+        echo '<script>
+        alert("Error: ' . $conn->error . '");
+        window.location.href = "../index.php";
+    </script>';
+       
     }
 }
 
 $conn->close();
-?>

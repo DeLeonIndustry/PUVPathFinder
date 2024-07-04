@@ -12,79 +12,88 @@ if (!isset($_SESSION['admin_id'])) {
             <span>PathFinder</span>
         </a>
 
-</div>
-<div id="sidebar-scrollbar">
-    <nav class="iq-sidebar-menu">
-        <ul id="iq-sidebar-toggle" class="iq-menu">
-        <?php if ($_SESSION['role'] === 'Admin'): ?>
-            <li class="iq-menu-title"><i class="ri-separator"></i><span>Main</span></li>
-            <li>
-                <a href="index.php" class="iq-waves-effect collapsed" aria-expanded="false"><i class="ri-home-4-line"></i><span>Dashboard</span></a>
-            </li>
-            <li>
-                <a href="profile.php" class="iq-waves-effect collapsed" aria-expanded="false"><i class="ri-user-line"></i><span>Profile</span></a>
-            </li>
-            <li>
-                <a href="form-layout.php" class="iq-waves-effect collapsed" aria-expanded="false"><i class="ri-profile-line"></i><span>Driver Registration</span></a>
-            </li>
-            <li>
-                <a href="#tables" class="iq-waves-effect collapsed" data-toggle="collapse" aria-expanded="false"><i class="ri-map-line"></i><span>Routes</span><i class="ri-arrow-right-s-line iq-arrow-right"></i></a>
-                <ul id="tables" class="iq-submenu collapse" data-parent="#iq-sidebar-toggle">
-                    <li><a href="routes.php">Routes</a></li>
-                    <li><a href="drivers.php">Add Routes</a></li>
-                </ul>
-            </li>
-            <li>
-                <a href="#tables" class="iq-waves-effect collapsed" data-toggle="collapse" aria-expanded="false"><i class="ri-table-line"></i><span>Lists</span><i class="ri-arrow-right-s-line iq-arrow-right"></i></a>
-                <ul id="tables" class="iq-submenu collapse" data-parent="#iq-sidebar-toggle">
-                    <li><a href="drivers.php">Driver List</a></li>
-                    <li><a href="commuters.php">Commuters List</a></li>
-                </ul>
-            </li>
-            <?php endif; ?>
-        </ul>
-    </nav>
-    <nav class="iq-sidebar-menu">
-        <ul id="iq-sidebar-toggle" class="iq-menu">
-        <?php if ($_SESSION['role'] === 'Driver'): ?>
-            <li class="iq-menu-title"><i class="ri-separator"></i><span>Main</span></li>
-            <li>
-                <a href="index.php" class="iq-waves-effect collapsed" aria-expanded="false"><i class="ri-home-4-line"></i><span>Dashboard</span></a>
-            </li>
-            <li>
-                <a href="profile.php" class="iq-waves-effect collapsed" aria-expanded="false"><i class="ri-user-line"></i><span>Profile</span></a>
-            </li>
-            <li>
-                <a href="form-layout.php" class="iq-waves-effect collapsed" aria-expanded="false"><i class="ri-profile-line"></i><span>Driver Registration</span></a>
-            </li>
-            <li>
-                <a href="#tables" class="iq-waves-effect collapsed" data-toggle="collapse" aria-expanded="false"><i class="ri-table-line"></i><span>Lists</span><i class="ri-arrow-right-s-line iq-arrow-right"></i></a>
-                <ul id="tables" class="iq-submenu collapse" data-parent="#iq-sidebar-toggle">
-                    <li><a href="drivers.php">Driver List</a></li>
-                    <li><a href="commuters.php">Commuters List</a></li>
-                </ul>
-            </li>
-            <?php endif; ?>
-        </ul>
-    </nav>
-</div>
+    </div>
+    <div id="sidebar-scrollbar">
+        <nav class="iq-sidebar-menu">
+            <ul id="iq-sidebar-toggle" class="iq-menu">
+                <?php if ($_SESSION['role'] === 'Admin') : ?>
+                    <li class="iq-menu-title"><i class="ri-separator"></i><span>Main</span></li>
+                    <li>
+                        <a href="index.php" class="iq-waves-effect collapsed" aria-expanded="false"><i class="ri-home-4-line"></i><span>Dashboard</span></a>
+                    </li>
+                    <li>
+                        <a href="profile.php" class="iq-waves-effect collapsed" aria-expanded="false"><i class="ri-user-line"></i><span>Profile</span></a>
+                    </li>
+                    <li>
+                        <a href="form-layout.php" class="iq-waves-effect collapsed" aria-expanded="false"><i class="ri-profile-line"></i><span>Driver Registration</span></a>
+                    </li>
+                    <li>
+                        <a href="#tables" class="iq-waves-effect collapsed" data-toggle="collapse" aria-expanded="false"><i class="ri-map-line"></i><span>Routes</span><i class="ri-arrow-right-s-line iq-arrow-right"></i></a>
+                        <ul id="tables" class="iq-submenu collapse" data-parent="#iq-sidebar-toggle">
+                            <li><a href="routes.php">Routes</a></li>
+                            <li><a href="add-route.php">Add Routes</a></li>
+                        </ul>
+                    </li>
+                    <li>
+                        <a href="#tables" class="iq-waves-effect collapsed" data-toggle="collapse" aria-expanded="false"><i class="ri-table-line"></i><span>Lists</span><i class="ri-arrow-right-s-line iq-arrow-right"></i></a>
+                        <ul id="tables" class="iq-submenu collapse" data-parent="#iq-sidebar-toggle">
+                            <li><a href="drivers.php">Driver List</a></li>
+                            <li><a href="commuters.php">Commuters List</a></li>
+                        </ul>
+                    </li>
+                <?php endif; ?>
+            </ul>
+        </nav>
+        <nav class="iq-sidebar-menu">
+            <ul id="iq-sidebar-toggle" class="iq-menu">
+                <?php if ($_SESSION['role'] === 'Driver') : ?>
+                    <li class="iq-menu-title"><i class="ri-separator"></i><span>Main</span></li>
+                    <li>
+                        <a href="index.php" class="iq-waves-effect collapsed" aria-expanded="false"><i class="ri-home-4-line"></i><span>Dashboard</span></a>
+                    </li>
+                <?php endif; ?>
+            </ul>
+        </nav>
+        <nav class="iq-sidebar-menu">
+            <ul id="iq-sidebar-toggle" class="iq-menu">
+                <?php if ($_SESSION['role'] === 'Commuters') : ?>
+                    <li class="iq-menu-title"><i class="ri-separator"></i><span>Main</span></li>
+                    <li>
+                        <a href="index.php" class="iq-waves-effect collapsed" aria-expanded="false"><i class="ri-home-4-line"></i><span>Dashboard</span></a>
+                    </li>
+                <?php endif; ?>
+            </ul>
+        </nav>
+    </div>
 
 </div>
 <div class="iq-top-navbar">
     <div class="iq-navbar-custom">
         <div class="iq-sidebar-logo">
             <div class="top-logo">
-                <a href="index.html" class="logo">
+                <a href="index.php" class="logo">
                     <img src="images/logo.png" class="img-fluid" alt="">
                     <span>Sofbox</span>
                 </a>
             </div>
         </div>
+        <?php
+        date_default_timezone_set('Asia/Manila'); // Set your timezone
+        $hour = date('H');
+
+        if ($hour >= 5 && $hour < 12) {
+            $greeting = "Good Morning";
+        } elseif ($hour >= 12 && $hour < 18) {
+            $greeting = "Good Afternoon";
+        } else {
+            $greeting = "Good Evening";
+        }
+        ?>
         <div class="navbar-breadcrumb">
-            <h5 class="mb-0">Dashboard</h5>
+            <h5 class="mb-0"><?php echo $greeting; ?>, <?php echo htmlspecialchars($_SESSION['admin_name']); ?>!</h5>
             <nav aria-label="breadcrumb">
                 <ul class="breadcrumb">
-                    <li class="breadcrumb-item"><a href="index.php">Home</a></li>
+                    <li class="breadcrumb-item"><a href="index.php"><?php echo htmlspecialchars($_SESSION['role']); ?></a></li>
                 </ul>
             </nav>
         </div>
@@ -92,7 +101,7 @@ if (!isset($_SESSION['admin_id'])) {
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                 <i class="ri-menu-3-line"></i>
             </button>
-            <div class="iq-menu-bt align-self-center">
+            <div class="iq-menu-bt align-self-right">
                 <div class="wrapper-menu">
                     <div class="line-menu half start"></div>
                     <div class="line-menu"></div>
@@ -100,16 +109,7 @@ if (!isset($_SESSION['admin_id'])) {
                 </div>
             </div>
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                <ul class="navbar-nav ml-auto navbar-list">
-                    <li class="nav-item">
-                        <a class="search-toggle iq-waves-effect" href="#"><i class="ri-search-line"></i></a>
-                        <form action="#" class="search-box">
-                            <input type="text" class="text search-input" placeholder="Type here to search..." />
-                        </form>
-                    </li>
 
-                    <li class="nav-item iq-full-screen"><a href="#" class="iq-waves-effect" id="btnFullscreen"><i class="ri-fullscreen-line"></i></a></li>
-                </ul>
             </div>
             <ul class="navbar-list">
                 <li>

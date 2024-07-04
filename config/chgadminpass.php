@@ -58,16 +58,22 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $stmt->bind_param("ss", $hashedNewPass, $email);
 
             if ($stmt->execute()) {
-                echo '<script>alert(Password successfully updated.")</script>'; 
-                header("Location: ../profile-edit.php");
+                echo '<script>
+                alert("Password successfully updated.");
+                window.location.href = "../profile-edit.php";
+            </script>';
             } else {
-                echo '<script>alert("Error updating password.")</script>'; 
-                header("Location: ../profile-edit.php");
+                echo '<script>
+                alert("Error updating password.");
+                window.location.href = "../profile-edit.php";
+            </script>';
             }
             $stmt->close();
         } else {
-            echo '<script>alert("Current password is incorrect.")</script>'; 
-            header("Location: ../profile-edit.php");
+            echo '<script>
+                alert("Current password is incorrect.");
+                window.location.href = "../profile-edit.php";
+            </script>';
         }
     }
 }

@@ -20,7 +20,7 @@ $result_total = $conn->query($sql_total);
 $total_records = $result_total->fetch_array()[0];
 $total_pages = ceil($total_records / $records_per_page);
 
-$sql = "SELECT municipal, description, latitude, longitude, created_at FROM routes;";
+$sql = "SELECT municipal, terminal, latitude, longitude, created_at FROM routes;";
 $result = $conn->query($sql);
 ?>
 <!doctype html>
@@ -123,7 +123,7 @@ $result = $conn->query($sql);
                                             
                                             echo "<tr>
                                                     <td>{$row["municipal"]}</td>
-                                                    <td>{$row["description"]}</td>
+                                                    <td>{$row["terminal"]}</td>
                                                     <td>{$row["latitude"]}</td>
                                                     <td>{$row["longitude"]}</td>
                                                     <td>{$row["created_at"]}</td>
