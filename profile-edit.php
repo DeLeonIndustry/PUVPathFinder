@@ -54,7 +54,78 @@ if (!isset($_SESSION['admin_id'])) {
 
       <!-- TOP Nav Bar END -->
       <!-- Page Content  -->
+      <?php if ($_SESSION['role'] === 'Admin') : ?>
       <div id="content-page" class="content-page">
+         <div class="container-fluid">
+            <div class="row">
+               <div class="col-lg-12">
+                  <div class="iq-card">
+                     <div class="iq-card-body p-0">
+                        <div class="iq-edit-list">
+                           <ul class="iq-edit-profile d-flex nav nav-pills">
+                              <li class="col-md-3 p-0">
+                                 <a class="nav-link active" data-toggle="pill" href="#personal-information">
+                                    Change password
+                                 </a>
+                              </li>
+                           </ul>
+                        </div>
+                     </div>
+                  </div>
+               </div>
+               <div class="col-lg-12">
+                  <div class="iq-edit-list-data">
+                     <div class="tab-content">
+                        <div class="tab-pane fade active show" id="personal-information" role="tabpanel">
+                           <div class="iq-card">
+                              <div class="iq-card-header d-flex justify-content-between">
+                                 <div class="iq-header-title">
+                                    <h4 class="card-title">Personal Information</h4>
+                                 </div>
+                              </div>
+                              <div class="iq-card-body">
+                              <form action="config/chgadminpass.php" method="POST">
+                                    <div class="form-group">
+                                       <label for="cpass">Current Password:</label>
+                                       <a href="javascripe:void();" class="float-right">Forgot Password</a>
+                                       <input type="Password" class="form-control" id="cpass" name="currentPass" value="">
+                                    </div>
+                                    <div class="form-group">
+                                       <label for="npass">New Password:</label>
+                                       <input type="Password" class="form-control" id="npass" name="newPass" value="">
+                                    </div>
+                                    <div class="form-group">
+                                       <label for="vpass">Verify Password:</label>
+                                       <input type="Password" class="form-control" id="vpass" name="confirmPass" value="">
+                                    </div>
+                                    <button type="submit" class="btn btn-primary mr-2">Submit</button>
+                                 </form>
+                              </div>
+                           </div>
+                        </div>
+                        <div class="tab-pane fade" id="chang-pwd" role="tabpanel">
+                           <div class="iq-card">
+                              <div class="iq-card-header d-flex justify-content-between">
+                                 <div class="iq-header-title">
+                                    <h4 class="card-title">Change Password</h4>
+                                 </div>
+                              </div>
+                              <div class="iq-card-body">
+                                 
+                              </div>
+                           </div>
+                        </div>
+
+
+                     </div>
+                  </div>
+               </div>
+            </div>
+         </div>
+      </div>
+      <?php endif; ?>
+      <?php if ($_SESSION['role'] === 'Driver' || $_SESSION['role'] === 'Commuter') : ?>
+         <div id="content-page" class="content-page">
          <div class="container-fluid">
             <div class="row">
                <div class="col-lg-12">
@@ -176,14 +247,13 @@ if (!isset($_SESSION['admin_id'])) {
                               </div>
                            </div>
                         </div>
-
-
                      </div>
                   </div>
                </div>
             </div>
          </div>
       </div>
+         <?php endif; ?>
    </div>
    <!-- Wrapper END -->
    <!-- Footer -->
