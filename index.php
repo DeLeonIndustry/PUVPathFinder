@@ -2,6 +2,7 @@
 session_start();
 include('config/database.php');
 include('config/function.php');
+include('config/commuters-map.php');
 
 if (!isset($_SESSION['admin_id'])) {
    header("Location: sign-in.php");
@@ -33,7 +34,6 @@ if (!isset($_SESSION['admin_id'])) {
    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
-
 </head>
 
 <body>
@@ -142,15 +142,26 @@ if (!isset($_SESSION['admin_id'])) {
                            <div id="mapDriver" style="height: 500px; margin-bottom: 15px; z-index: 0;"></div>
                            <script>
                               document.addEventListener('DOMContentLoaded', function() {
+
                                  // Initialize Driver map
                                  var mapDriver = L.map('mapDriver').setView([16.936249, 121.769288], 13);
                                  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {}).addTo(mapDriver);
+
+                                 fetch('network.json')
+                                    .then(response => response.json())
+                                    .then(geojson => {
+                                       var pathFinder = new PathFinder(geojson);
+                                       // Continue with map initialization and update functions
+                                    })
+                                    .catch(error => {
+                                       console.error('Error loading GeoJSON:', error);
+                                    });
 
                                  function updateDriverMap() {
                                     var currentLocationSelect = document.getElementById('currentLocationSelect');
                                     var selectRouteSelect = document.getElementById('selectRouteSelect');
 
-                                    // Clear existing markers and routes in Driver map
+                                    // Clear existing markers and route in Driver map
                                     mapDriver.eachLayer(function(layer) {
                                        if (layer instanceof L.Marker || layer instanceof L.Polyline) {
                                           mapDriver.removeLayer(layer);
@@ -161,34 +172,39 @@ if (!isset($_SESSION['admin_id'])) {
                                     var currentLocationOption = currentLocationSelect.options[currentLocationSelect.selectedIndex];
                                     var selectRouteOption = selectRouteSelect.options[selectRouteSelect.selectedIndex];
 
+                                    // Define custom icons
+                                    var curlocIcon = L.icon({
+                                       iconUrl: 'images/curloc.png',
+                                       iconSize: [54, 54], // size of the icon
+                                       iconAnchor: [16, 32], // point of the icon which will correspond to marker's location
+                                       popupAnchor: [0, -32] // point from which the popup should open relative to the iconAnchor
+                                    });
+
+                                    var destIcon = L.icon({
+                                       iconUrl: 'images/des.png',
+                                       iconSize: [54, 54],
+                                       iconAnchor: [16, 32],
+                                       popupAnchor: [0, -32]
+                                    });
+
                                     // Add marker for current location
                                     if (currentLocationOption.dataset.lat && currentLocationOption.dataset.lng) {
                                        var lat = parseFloat(currentLocationOption.dataset.lat);
                                        var lng = parseFloat(currentLocationOption.dataset.lng);
-                                       var marker = L.marker([lat, lng]).addTo(mapDriver);
-                                       marker.bindPopup(currentLocationOption.value).openPopup();
+                                       var marker = L.marker([lat, lng], {
+                                          icon: curlocIcon
+                                       }).addTo(mapDriver);
+                                       marker.bindPopup("<center><h6><b>Current Location</b></h6></center><br>" + currentLocationOption.value).openPopup();
                                     }
 
                                     // Add marker for selected route
                                     if (selectRouteOption.dataset.lat && selectRouteOption.dataset.lng) {
                                        var routeLat = parseFloat(selectRouteOption.dataset.lat);
                                        var routeLng = parseFloat(selectRouteOption.dataset.lng);
-                                       var routeMarker = L.marker([routeLat, routeLng]).addTo(mapDriver);
-                                       routeMarker.bindPopup(selectRouteOption.value).openPopup();
-                                    }
-
-                                    // Draw a polyline between current location and selected route
-                                    if (currentLocationOption.dataset.lat && currentLocationOption.dataset.lng &&
-                                       selectRouteOption.dataset.lat && selectRouteOption.dataset.lng) {
-                                       var latLngs = [
-                                          [parseFloat(currentLocationOption.dataset.lat), parseFloat(currentLocationOption.dataset.lng)],
-                                          [parseFloat(selectRouteOption.dataset.lat), parseFloat(selectRouteOption.dataset.lng)]
-                                       ];
-                                       var route = L.polyline(latLngs, {
-                                          color: 'blue',
-                                          opacity: 0.7,
-                                          weight: 5
+                                       var routeMarker = L.marker([routeLat, routeLng], {
+                                          icon: destIcon
                                        }).addTo(mapDriver);
+                                       routeMarker.bindPopup("<center><h6><b>Destination</b></h6></center><br>" + selectRouteOption.value).openPopup();
                                     }
                                  }
 
@@ -198,7 +214,7 @@ if (!isset($_SESSION['admin_id'])) {
 
                                  if (currentLocationSelect) {
                                     currentLocationSelect.addEventListener('change', function() {
-                                       updateDriverMap();
+                                       updateDriverMap(); // Update Driver map only
                                     });
                                  }
 
@@ -281,11 +297,75 @@ if (!isset($_SESSION['admin_id'])) {
             <div id="content-page" class="content-page">
                <div class="container-fluid">
 
-                  <div id="map" style="height: 500px; margin-bottom: 15px; z-index: 0;"></div>
+                  <div id="mapCommuters" style="height: 500px; margin-bottom: 15px; z-index: 0;"></div>
                   <script>
-                     var map = L.map('map').setView([16.936249, 121.769288], 13);
-                     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {}).addTo(map);
+                     document.addEventListener('DOMContentLoaded', function() {
+                        var map = L.map('mapCommuters').setView([16.936249, 121.769288], 11);
+                        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {}).addTo(map);
+
+                        var terminalIcon = L.icon({
+                           iconUrl: 'images/terminal.png',
+                           iconSize: [54, 54], // size of the icon
+                           iconAnchor: [16, 32], // point of the icon which will correspond to marker's location
+                           popupAnchor: [0, -32] // point from which the popup should open relative to the iconAnchor
+                        });
+
+                        // Loop through routes fetched from PHP and add them to the map
+                        <?php foreach ($routes as $route) : ?>
+                           var latlng = L.latLng(<?php echo $route['latitude']; ?>, <?php echo $route['longitude']; ?>);
+                           var marker = L.marker(latlng, {
+                              icon: terminalIcon
+                           }).addTo(map);
+                           var popupContent = "<b><?php echo htmlspecialchars($route['municipal']); ?></b> <br>" +
+                              "<b><?php echo htmlspecialchars($route['terminal']); ?></b>";
+                           marker.bindPopup(popupContent).openPopup();
+                        <?php endforeach; ?>
+                     });
                   </script>
+                  <div class="iq-card">
+                     <div class="iq-card-header d-flex justify-content-between">
+                        <div class="iq-header-title">
+                           <h4 class="card-title">Available Vehicle</h4>
+                        </div>
+                     </div>
+                     <div class="iq-card-body">
+                        <div class="table-responsive">
+                           <div class="row justify-content-between">
+                              <div class="col-sm-12 col-md-6">
+                                 <div id="user_list_datatable_info" class="dataTables_filter">
+
+                                 </div>
+                              </div>
+
+                           </div>
+                           <table id="user-list-table" class="table table-striped table-bordered mt-4" role="grid" aria-describedby="user-list-page-info">
+                              <thead>
+                                 <tr>
+                                    <th>Name</th>
+                                    <th>Contact</th>
+                                    <th>Current Location</th>
+                                    <th>Destination</th>
+                                    <th>Status</th>
+                                    <th>Plate No.</th>
+                                    <th>Type of Vehicle</th>
+                                 </tr>
+                              </thead>
+                              <tbody>
+                                 <tr>
+                                    <td>test</td>
+                                    <td>test</td>
+                                    <td>test</td>
+                                    <td>test</td>
+                                    <td>test</td>
+                                    <td>test</td>
+                                    <td>test</td>
+                                 </tr>
+                              </tbody>
+                           </table>
+                        </div>
+
+                     </div>
+                  </div>
                </div>
             </div>
          <?php endif; ?>
