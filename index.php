@@ -31,9 +31,10 @@ if (!isset($_SESSION['admin_id'])) {
    <link rel="stylesheet" href="css/responsive.css">
    <link rel="stylesheet" href="css/toogle.css">
    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
-   <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+   <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.css" />
+   <script src="https://unpkg.com/leaflet@1.8.0/dist/leaflet.js"></script>
+   <script src="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.js"></script>
    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
-   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
 </head>
 
 <body>
@@ -147,23 +148,13 @@ if (!isset($_SESSION['admin_id'])) {
                                  var mapDriver = L.map('mapDriver').setView([16.936249, 121.769288], 13);
                                  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {}).addTo(mapDriver);
 
-                                 fetch('network.json')
-                                    .then(response => response.json())
-                                    .then(geojson => {
-                                       var pathFinder = new PathFinder(geojson);
-                                       // Continue with map initialization and update functions
-                                    })
-                                    .catch(error => {
-                                       console.error('Error loading GeoJSON:', error);
-                                    });
-
                                  function updateDriverMap() {
                                     var currentLocationSelect = document.getElementById('currentLocationSelect');
                                     var selectRouteSelect = document.getElementById('selectRouteSelect');
 
                                     // Clear existing markers and route in Driver map
                                     mapDriver.eachLayer(function(layer) {
-                                       if (layer instanceof L.Marker || layer instanceof L.Polyline) {
+                                       if (layer instanceof L.Marker || layer instanceof L.Polyline || layer._container.classList.contains('leaflet-routing-container')) {
                                           mapDriver.removeLayer(layer);
                                        }
                                     });
@@ -188,23 +179,41 @@ if (!isset($_SESSION['admin_id'])) {
                                     });
 
                                     // Add marker for current location
+                                    var currentMarker;
                                     if (currentLocationOption.dataset.lat && currentLocationOption.dataset.lng) {
                                        var lat = parseFloat(currentLocationOption.dataset.lat);
                                        var lng = parseFloat(currentLocationOption.dataset.lng);
-                                       var marker = L.marker([lat, lng], {
+                                       currentMarker = L.marker([lat, lng], {
                                           icon: curlocIcon
                                        }).addTo(mapDriver);
-                                       marker.bindPopup("<center><h6><b>Current Location</b></h6></center><br>" + currentLocationOption.value).openPopup();
+                                       currentMarker.bindPopup("<center><h6><b>Current Location</b></h6></center><br>" + currentLocationOption.value).openPopup();
                                     }
 
                                     // Add marker for selected route
                                     if (selectRouteOption.dataset.lat && selectRouteOption.dataset.lng) {
                                        var routeLat = parseFloat(selectRouteOption.dataset.lat);
                                        var routeLng = parseFloat(selectRouteOption.dataset.lng);
-                                       var routeMarker = L.marker([routeLat, routeLng], {
+                                       var destinationMarker = L.marker([routeLat, routeLng], {
                                           icon: destIcon
                                        }).addTo(mapDriver);
-                                       routeMarker.bindPopup("<center><h6><b>Destination</b></h6></center><br>" + selectRouteOption.value).openPopup();
+                                       destinationMarker.bindPopup("<center><h6><b>Destination</b></h6></center><br>" + selectRouteOption.value).openPopup();
+
+                                       // Add routing control
+                                       if (currentMarker) {
+                                          L.Routing.control({
+                                             waypoints: [
+                                                L.latLng(currentMarker.getLatLng().lat, currentMarker.getLatLng().lng),
+                                                L.latLng(routeLat, routeLng)
+                                             ],
+                                             createMarker: function() {
+                                                return null;
+                                             } // Prevent default routing markers
+                                          }).on('routesfound', function(e) {
+                                             var routes = e.routes;
+                                             console.log(routes);
+                                             // No marker movement, just display the route
+                                          }).addTo(mapDriver);
+                                       }
                                     }
                                  }
 

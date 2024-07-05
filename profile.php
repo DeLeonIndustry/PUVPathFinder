@@ -1,11 +1,19 @@
 <?php
 session_start();
+include('config/database.php');
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 if (!isset($_SESSION['admin_id'])) {
     header("Location: sign-in.php");
     exit();
 }
+$admin_id = $_SESSION['admin_id']; // Assuming you have stored the user ID in the session
+$query = "SELECT * FROM accounts WHERE id = ?";
+$stmt = $conn->prepare($query);
+$stmt->bind_param('i', $admin_id);
+$stmt->execute();
+$result = $stmt->get_result();
+$user = $result->fetch_assoc();
 ?>
 <!doctype html>
 <html lang="en">
@@ -150,11 +158,13 @@ if (!isset($_SESSION['admin_id'])) {
                                  <div class="about-info m-0 p-0">
                                     <div class="row">
                                        <div class="col-3">Email:</div>
-                                       <div class="col-9"><a href="mailto:nikjone@demoo.com"> nikjone@demoo.com </a></div>
+                                       <div class="col-9"><?php echo $user['email']; ?></div>
                                        <div class="col-3">Phone:</div>
-                                       <div class="col-9"><a href="tel:001 2351 256 12">001 2351 256 12</a></div>
-                                       <div class="col-3">Location:</div>
-                                       <div class="col-9">USA</div>
+                                       <div class="col-9"><?php echo $user['contact']; ?></div>
+                                       <div class="col-3">Address:</div>
+                                       <div class="col-9"><?php echo $user['address']; ?></div>
+                                       <div class="col-3">Birthdate</div>
+                                       <div class="col-9"><?php echo $user['dob']; ?></div>
                                     </div>
                                  </div>
                               </div>

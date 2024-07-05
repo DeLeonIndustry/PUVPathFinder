@@ -1,10 +1,19 @@
 <?php
 session_start();
+include('config/database.php');
 
 if (!isset($_SESSION['admin_id'])) {
    header("Location: sign-in.php");
    exit();
 }
+
+$admin_id = $_SESSION['admin_id']; // Assuming you have stored the user ID in the session
+$query = "SELECT * FROM accounts WHERE id = ?";
+$stmt = $conn->prepare($query);
+$stmt->bind_param('i', $admin_id);
+$stmt->execute();
+$result = $stmt->get_result();
+$user = $result->fetch_assoc();
 ?>
 <!doctype html>
 <html lang="en">
@@ -55,59 +64,60 @@ if (!isset($_SESSION['admin_id'])) {
       <!-- TOP Nav Bar END -->
       <!-- Page Content  -->
       <?php if ($_SESSION['role'] === 'Admin') : ?>
-      <div id="content-page" class="content-page">
-         <div class="container-fluid">
-            <div class="row">
-               <div class="col-lg-12">
-                  <div class="iq-card">
-                     <div class="iq-card-body p-0">
-                        <div class="iq-edit-list">
-                           <ul class="iq-edit-profile d-flex nav nav-pills">
-                              <li class="col-md-3 p-0">
-                                 <a class="nav-link active" data-toggle="pill" href="#personal-information">
-                                    Change password
-                                 </a>
-                              </li>
-                           </ul>
+         <div id="content-page" class="content-page">
+            <div class="container-fluid">
+               <div class="row">
+                  <div class="col-lg-12">
+                     <div class="iq-card">
+                        <div class="iq-card-body p-0">
+                           <div class="iq-edit-list">
+                              <ul class="iq-edit-profile d-flex nav nav-pills">
+                                 <li class="col-md-3 p-0">
+                                    <a class="nav-link active" data-toggle="pill" href="#personal-information">
+                                       Change password
+                                    </a>
+                                 </li>
+                              </ul>
+                           </div>
                         </div>
                      </div>
                   </div>
-               </div>
-               <div class="col-lg-12">
-                  <div class="iq-edit-list-data">
-                     <div class="tab-content">
-                        <div class="tab-pane fade active show" id="personal-information" role="tabpanel">
-                           <div class="iq-card">
-                              <div class="iq-card-header d-flex justify-content-between">
-                                 <div class="iq-header-title">
-                                    <h4 class="card-title">Personal Information</h4>
+                  <div class="col-lg-12">
+                     <div class="iq-edit-list-data">
+                        <div class="tab-content">
+                           <div class="tab-pane fade active show" id="personal-information" role="tabpanel">
+                              <div class="iq-card">
+                                 <div class="iq-card-header d-flex justify-content-between">
+                                    <div class="iq-header-title">
+                                       <h4 class="card-title">Personal Information</h4>
+                                    </div>
+                                 </div>
+                                 <div class="iq-card-body">
+                                    <form action="config/chgadminpass.php" method="POST">
+                                       <div class="form-group">
+                                          <label for="cpass">Current Password:</label>
+                                          <a href="javascripe:void();" class="float-right">Forgot Password</a>
+                                          <input type="Password" class="form-control" id="cpass" name="currentPass" value="">
+                                       </div>
+                                       <div class="form-group">
+                                          <label for="npass">New Password:</label>
+                                          <input type="Password" class="form-control" id="npass" name="newPass" value="">
+                                       </div>
+                                       <div class="form-group">
+                                          <label for="vpass">Verify Password:</label>
+                                          <input type="Password" class="form-control" id="vpass" name="confirmPass" value="">
+                                       </div>
+                                       <button type="submit" class="btn btn-primary mr-2">Submit</button>
+                                    </form>
                                  </div>
                               </div>
-                              <div class="iq-card-body">
-                              <form action="config/chgadminpass.php" method="POST">
-                                    <div class="form-group">
-                                       <label for="cpass">Current Password:</label>
-                                       <a href="javascripe:void();" class="float-right">Forgot Password</a>
-                                       <input type="Password" class="form-control" id="cpass" name="currentPass" value="">
-                                    </div>
-                                    <div class="form-group">
-                                       <label for="npass">New Password:</label>
-                                       <input type="Password" class="form-control" id="npass" name="newPass" value="">
-                                    </div>
-                                    <div class="form-group">
-                                       <label for="vpass">Verify Password:</label>
-                                       <input type="Password" class="form-control" id="vpass" name="confirmPass" value="">
-                                    </div>
-                                    <button type="submit" class="btn btn-primary mr-2">Submit</button>
-                                 </form>
-                              </div>
                            </div>
-                        </div>
-                        <div class="tab-pane fade" id="chang-pwd" role="tabpanel">
-                           <div class="iq-card">
-                              <div class="iq-card-header d-flex justify-content-between">
-                                 <div class="iq-header-title">
-                                    <h4 class="card-title">Change Password</h4>
+                           <div class="tab-pane fade" id="chang-pwd" role="tabpanel">
+                              <div class="iq-card">
+                                 <div class="iq-card-header d-flex justify-content-between">
+                                    <div class="iq-header-title">
+                                       <h4 class="card-title">Change Password</h4>
+                                    </div>
                                  </div>
                               </div>
                            </div>
@@ -117,129 +127,121 @@ if (!isset($_SESSION['admin_id'])) {
                </div>
             </div>
          </div>
-      </div>
       <?php endif; ?>
       <?php if ($_SESSION['role'] === 'Driver' || $_SESSION['role'] === 'Commuters') : ?>
          <div id="content-page" class="content-page">
-         <div class="container-fluid">
-            <div class="row">
-               <div class="col-lg-12">
-                  <div class="iq-card">
-                     <div class="iq-card-body p-0">
-                        <div class="iq-edit-list">
-                           <ul class="iq-edit-profile d-flex nav nav-pills">
-                              <li class="col-md-3 p-0">
-                                 <a class="nav-link active" data-toggle="pill" href="#personal-information">
-                                    Personal Information
-                                 </a>
-                              </li>
-                              <li class="col-md-3 p-0">
-                                 <a class="nav-link" data-toggle="pill" href="#chang-pwd">
-                                    Change Password
-                                 </a>
-                              </li>
+            <div class="container-fluid">
+               <div class="row">
+                  <div class="col-lg-12">
+                     <div class="iq-card">
+                        <div class="iq-card-body p-0">
+                           <div class="iq-edit-list">
+                              <ul class="iq-edit-profile d-flex nav nav-pills">
+                                 <li class="col-md-3 p-0">
+                                    <a class="nav-link active" data-toggle="pill" href="#personal-information">
+                                       Personal Information
+                                    </a>
+                                 </li>
+                                 <li class="col-md-3 p-0">
+                                    <a class="nav-link" data-toggle="pill" href="#chang-pwd">
+                                       Change Password
+                                    </a>
+                                 </li>
 
-                           </ul>
+                              </ul>
+                           </div>
                         </div>
                      </div>
                   </div>
-               </div>
-               <div class="col-lg-12">
-                  <div class="iq-edit-list-data">
-                     <div class="tab-content">
-                        <div class="tab-pane fade active show" id="personal-information" role="tabpanel">
-                           <div class="iq-card">
-                              <div class="iq-card-header d-flex justify-content-between">
-                                 <div class="iq-header-title">
-                                    <h4 class="card-title">Personal Information</h4>
+                  <div class="col-lg-12">
+                     <div class="iq-edit-list-data">
+                        <div class="tab-content">
+                           <div class="tab-pane fade active show" id="personal-information" role="tabpanel">
+                              <div class="iq-card">
+                                 <div class="iq-card-header d-flex justify-content-between">
+                                    <div class="iq-header-title">
+                                       <h4 class="card-title">Personal Information</h4>
+                                    </div>
                                  </div>
-                              </div>
-                              <div class="iq-card-body">
-                                 <form>
-                                    <div class="form-group row align-items-center">
-                                       <div class="col-md-12">
-                                          <div class="profile-img-edit">
-                                             <img class="profile-pic" src="images/user/11.png" alt="profile-pic">
-                                             <div class="p-image">
-                                                <i class="ri-pencil-line upload-button"></i>
-                                                <input class="file-upload" type="file" accept="image/*" />
-                                             </div>
+                                 <div class="iq-card-body">
+                                    <form method="post" action="config/update-profile.php" enctype="multipart/form-data">
+                                       <div class="form-group row align-items-center">
+                                          <div class="col-md-12">
+
                                           </div>
                                        </div>
-                                    </div>
-                                    <div class=" row align-items-center">
-                                    <?php if ($_SESSION['role'] === 'Driver') : ?>
-                                       <div class="form-group col-sm-6">
-                                          <label for="fname">Plate No.</label>
-                                          <input type="text" class="form-control" id="plateno" value="">
-                                       </div>
-                                       <div class="form-group col-sm-6">
-                                          <label for="lname">Type of Vehicle</label>
-                                          <input type="text" class="form-control" id="tovehicle" value="">
-                                       </div>
+                                       <?php if ($_SESSION['role'] === 'Driver') : ?>
+                                          <div class="form-group col-sm-6">
+                                             <label for="plateno">Plate No.</label>
+                                             <input type="text" class="form-control" name="plateno" id="plateno" value="<?php echo $user['plateno']; ?>">
+                                          </div>
+                                          <div class="form-group col-sm-6">
+                                             <label for="tovehicle">Type of Vehicle</label>
+                                             <input type="text" class="form-control" name="tovehicle" id="tovehicle" value="<?php echo $user['tovehicle']; ?>">
+                                          </div>
                                        <?php endif; ?>
                                        <div class="form-group col-sm-6">
-                                          <label for="fname">First Name:</label>
-                                          <input type="text" class="form-control" id="name" value="">
+                                          <label for="name">First Name:</label>
+                                          <input type="text" class="form-control" name="name" id="name" value="<?php echo $user['name']; ?>">
                                        </div>
                                        <div class="form-group col-sm-6">
-                                          <label for="lname">Middle Name</label>
-                                          <input type="text" class="form-control" id="mname" value="">
+                                          <label for="mname">Middle Name</label>
+                                          <input type="text" class="form-control" name="mname" id="mname" value="<?php echo $user['mname']; ?>">
                                        </div>
                                        <div class="form-group col-sm-6">
                                           <label for="lname">Last Name:</label>
-                                          <input type="text" class="form-control" id="lname" value="">
+                                          <input type="text" class="form-control" name="lname" id="lname" value="<?php echo $user['lname']; ?>">
                                        </div>
                                        <div class="form-group col-sm-6">
-                                          <label for="lname">Suffix</label>
-                                          <input type="text" class="form-control" id="suffix" value="">
+                                          <label for="suffix">Suffix</label>
+                                          <input type="text" class="form-control" name="suffix" id="suffix" value="<?php echo $user['suffix']; ?>">
                                        </div>
                                        <div class="form-group col-sm-6">
-                                          <label for="lname">Email</label>
-                                          <input type="text" class="form-control" id="email" value="">
+                                          <label for="email">Email</label>
+                                          <input type="email" class="form-control" name="email" id="email" value="<?php echo $user['email']; ?>">
                                        </div>
                                        <div class="form-group col-sm-6">
-                                          <label for="lname">Address</label>
-                                          <input type="text" class="form-control" id="address" value="">
+                                          <label for="address">Address</label>
+                                          <input type="text" class="form-control" name="address" id="address" value="<?php echo $user['address']; ?>">
                                        </div>
                                        <div class="form-group col-sm-6">
-                                          <label for="lname">Date of Birth</label>
-                                          <input type="date" class="form-control" id="dob" value="">
+                                          <label for="dob">Date of Birth</label>
+                                          <input type="date" class="form-control" name="dob" id="dob" value="<?php echo $user['dob']; ?>">
                                        </div>
                                        <div class="form-group col-sm-6">
-                                          <label for="lname">Contact</label>
-                                          <input type="text" class="form-control" id="contact" value="">
+                                          <label for="contact">Contact</label>
+                                          <input type="text" class="form-control" name="contact" id="contact" value="<?php echo $user['contact']; ?>">
                                        </div>
-                                    </div>
-                                    <button type="submit" class="btn btn-primary mr-2">Update</button>
-                                 </form>
-                              </div>
-                           </div>
-                        </div>
-                        <div class="tab-pane fade" id="chang-pwd" role="tabpanel">
-                           <div class="iq-card">
-                              <div class="iq-card-header d-flex justify-content-between">
-                                 <div class="iq-header-title">
-                                    <h4 class="card-title">Change Password</h4>
+                                       <button type="submit" class="btn btn-primary mr-2">Update</button>
+                                    </form>
                                  </div>
                               </div>
-                              <div class="iq-card-body">
-                                 <form action="config/chgadminpass.php" method="POST">
-                                    <div class="form-group">
-                                       <label for="cpass">Current Password:</label>
-                                       <a href="javascripe:void();" class="float-right">Forgot Password</a>
-                                       <input type="Password" class="form-control" id="cpass" name="currentPass" value="">
+                           </div>
+                           <div class="tab-pane fade" id="chang-pwd" role="tabpanel">
+                              <div class="iq-card">
+                                 <div class="iq-card-header d-flex justify-content-between">
+                                    <div class="iq-header-title">
+                                       <h4 class="card-title">Change Password</h4>
                                     </div>
-                                    <div class="form-group">
-                                       <label for="npass">New Password:</label>
-                                       <input type="Password" class="form-control" id="npass" name="newPass" value="">
-                                    </div>
-                                    <div class="form-group">
-                                       <label for="vpass">Verify Password:</label>
-                                       <input type="Password" class="form-control" id="vpass" name="confirmPass" value="">
-                                    </div>
-                                    <button type="submit" class="btn btn-primary mr-2">Submit</button>
-                                 </form>
+                                 </div>
+                                 <div class="iq-card-body">
+                                    <form action="config/chgadminpass.php" method="POST">
+                                       <div class="form-group">
+                                          <label for="cpass">Current Password:</label>
+                                          <a href="javascripe:void();" class="float-right">Forgot Password</a>
+                                          <input type="Password" class="form-control" id="cpass" name="currentPass" value="">
+                                       </div>
+                                       <div class="form-group">
+                                          <label for="npass">New Password:</label>
+                                          <input type="Password" class="form-control" id="npass" name="newPass" value="">
+                                       </div>
+                                       <div class="form-group">
+                                          <label for="vpass">Verify Password:</label>
+                                          <input type="Password" class="form-control" id="vpass" name="confirmPass" value="">
+                                       </div>
+                                       <button type="submit" class="btn btn-primary mr-2">Submit</button>
+                                    </form>
+                                 </div>
                               </div>
                            </div>
                         </div>
@@ -248,8 +250,7 @@ if (!isset($_SESSION['admin_id'])) {
                </div>
             </div>
          </div>
-      </div>
-         <?php endif; ?>
+      <?php endif; ?>
    </div>
    <!-- Wrapper END -->
    <!-- Footer -->
